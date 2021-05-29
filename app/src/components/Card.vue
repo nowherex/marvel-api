@@ -1,24 +1,31 @@
 <template>
-  <q-card class="my-card flex flex-center">
-    <q-item-section avatar>
+  <q-card class="my-card">
+    <div
+      class="flex flex-center"
+      @click="$emit('click-on-card')"
+    >
+      <q-img
+        :src="data.thumbnail.path+'.'+data.thumbnail.extension"
+        style="width: 200px; height: 200px; margin: 10px 10px 0 10px;"
+        contain
+      />
+      <q-card-section>
+        <div
+          class="title"
+          style="width: 200px; height: 30px;"
+        >
+          {{ data.name || data.title }}
+        </div>
+      </q-card-section>
+    </div>
+    <q-card-actions>
       <q-btn
         flat
         round
         color="red"
         icon="favorite_border"
       />
-    </q-item-section>
-
-    <q-img
-      :src="data.thumbnail.path+'.'+data.thumbnail.extension"
-      style="width: 200px; height: 200px; margin: 10px 10px 0 10px;"
-      contain
-    />
-    <q-card-section>
-      <div class="title">
-        {{ data.name || data.title }}
-      </div>
-    </q-card-section>
+    </q-card-actions>
   </q-card>
 </template>
 
@@ -32,8 +39,7 @@ export default {
 
 <style lang="sass" scoped>
 .title
-  font-size: 0.8em
-  padding: 0
+  font-size: 0.9em
 
 .my-card
   width: 100%
