@@ -1,7 +1,7 @@
 <template>
-<div class="q-pa-md">
-  <q-layout view="lHh lpr lFf" style="height: 400px" class="shadow-2 rounded-borders">
-    <q-header elevated class="bg-red">
+<div>
+  <q-layout view="lHh lpr lFf">
+    <q-header elevated class="bg-red" style="height: 150px">
       <q-toolbar class="q-pa-md" style="height: 120px">
         <q-toolbar-title>
               <q-img
