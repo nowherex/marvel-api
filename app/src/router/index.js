@@ -26,5 +26,16 @@ export default function (/* { store, ssrContext } */) {
     base: process.env.VUE_ROUTER_BASE
   })
 
+  Router.beforeEach((to, from, next) => {
+    const publicPages = ['/login']
+    const authRequired = !publicPages.includes(to.path)
+    const loggedIn = localStorage.getItem('user')
+
+    if (authRequired && !loggedIn) {
+      return next('/login')
+    }
+
+    next()
+  })
   return Router
 }

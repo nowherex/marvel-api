@@ -5,7 +5,7 @@
         <div class="column">
           <div class="row">
             <q-img
-              src="https://i.ibb.co/pQP9KrK/groot.png"
+              src="https://i.ibb.co/Sscd9Rn/groot.png"
               style="width: 200px; height: 200px; flex: 1"
               contain
             />

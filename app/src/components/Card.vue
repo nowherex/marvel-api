@@ -1,5 +1,9 @@
 <template>
-  <q-card class="my-card">
+  <q-card
+    v-ripple
+    class="my-card"
+    clickable
+  >
     <div
       class="flex flex-center"
       @click="$emit('click-on-card')"
@@ -12,7 +16,7 @@
       <q-card-section>
         <div
           class="title"
-          style="width: 200px; height: 30px;"
+          style="width: 200px; height: 55px;"
         >
           {{ data.name || data.title }}
         </div>
@@ -24,6 +28,7 @@
         round
         color="red"
         icon="favorite_border"
+        class="likeBtn"
       />
     </q-card-actions>
   </q-card>
@@ -44,4 +49,15 @@ export default {
 .my-card
   width: 100%
   max-width: 230px
+  opacity: .8
+.my-card:hover
+  transition: all 0.7s ease-out
+  box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2)
+  top: -4px
+  border: 1px solid #cccccc
+  background-color: white
+  cursor: pointer
+  opacity: 1
+  .likeBtn
+    opacity: .5
 </style>
