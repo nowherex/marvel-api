@@ -5,18 +5,26 @@
         v-for="i in numberCards"
         :key="i"
         style="width: 200px"
+        animation="pulse-x"
       >
         <q-skeleton
           height="200px"
           square
+          animation="pulse-x"
         />
         <q-item>
           <q-item-section>
             <q-item-label>
-              <q-skeleton type="text" />
+              <q-skeleton
+                type="text"
+                animation="pulse-x"
+              />
             </q-item-label>
             <q-item-label caption>
-              <q-skeleton type="text" />
+              <q-skeleton
+                type="text"
+                animation="pulse-x"
+              />
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -24,7 +32,11 @@
           align="left"
           class="q-gutter-md"
         >
-          <q-skeleton type="QBtn" />
+          <q-skeleton
+            type="QBtn"
+            animation="pulse-x"
+            width="40px"
+          />
         </q-card-actions>
       </q-card>
     </div>
