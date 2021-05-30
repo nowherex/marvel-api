@@ -32,10 +32,13 @@
             <q-menu>
               <div class="row no-wrap q-pa-md">
                 <div class="column items-center q-pa-sm">
-                  <div class="text-subtitle1 q-mt-md q-mb-xs">
-                    Favorites
-                  </div>
-                  <div class="text-subtitle1 q-mt-md q-mb-xs">
+                  <q-btn
+                    to="/Favoritos"
+                    flat
+                    color="secondary"
+                    label="Meus Favorites"
+                  />
+                  <div class="text-grey text-bold q-mt-md q-mb-xs">
                     John Doe
                   </div>
 

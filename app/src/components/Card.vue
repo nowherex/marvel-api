@@ -27,8 +27,9 @@
         flat
         round
         color="red"
-        icon="favorite_border"
+        :icon="isLiked ? 'favorite' : 'favorite_border'"
         class="likeBtn"
+        @click="togglefav"
       />
     </q-card-actions>
   </q-card>
@@ -38,7 +39,12 @@
 export default {
   name: 'Card',
   // eslint-disable-next-line vue/require-prop-types
-  props: ['data']
+  props: ['data', 'isLiked'],
+  methods: {
+    togglefav: function () {
+      this.$emit('togglefav', !this.isLiked)
+    }
+  }
 }
 </script>
 
@@ -50,6 +56,8 @@ export default {
   width: 100%
   max-width: 230px
   opacity: .8
+.likeBtn
+  opacity: .8
 .my-card:hover
   transition: all 0.7s ease-out
   box-shadow: 0px 4px 8px rgba(38, 38, 38, 0.2)
@@ -59,5 +67,5 @@ export default {
   cursor: pointer
   opacity: 1
   .likeBtn
-    opacity: .5
+    opacity: 1
 </style>

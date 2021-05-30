@@ -40,20 +40,20 @@
       style="max-width: 300px"
     >
       <div class="q-mt-sm q-gutter-sm">
-        <span class="text-subtitle2">
-          Items por pagina: {{ totalPages }}
-        </span>
         <q-select
           v-model="totalPages"
           filled
           :options="options"
-          label="Standard"
+          label="Items por pagina"
           emit-value
           map-options
         />
       </div>
     </div>
-    <skeleton-card v-if="load" />
+    <skeleton-card
+      v-if="load"
+      :number-cards="totalPages"
+    />
     <div
       v-else
       class="q-pa-md q-gutter-md flex flex-center"
@@ -64,7 +64,8 @@
       >
         <card
           :data="item"
-          @click-on-card="getItem(item.id)"
+          :is-liked="getItem(item)"
+          @togglefav="likeItem(item)"
         />
       </div>
     </div>
@@ -108,6 +109,7 @@ export default {
   data () {
     return {
       load: true,
+      favoritos: [],
       drawerR: true,
       search: '',
       id: 0,
@@ -141,10 +143,35 @@ export default {
   },
   mounted () {
     this.getComics()
+    if (JSON.parse(localStorage.getItem('comicsFavoritos'))) {
+      this.favoritos = JSON.parse(localStorage.getItem('comicsFavoritos'))
+    }
   },
   methods: {
-    getItem (id) {
-      console.log('click', id)
+    getItem (item) {
+      const localStorageFavorites = JSON.parse(localStorage.getItem('comicsFavoritos'))
+      this.favorites = localStorage
+        .getItem('comicsFavoritos') !== null
+        ? localStorageFavorites
+        : []
+      if (this.favoritos.some(heroi => heroi.id === item.id)) {
+        return true
+      }
+      return false
+    },
+    likeItem (item) {
+      if (this.favoritos.some(heroi => heroi.id === item.id)) {
+        this.favoritos.splice(this.favoritos.findIndex(x => x.id === item.id), 1)
+        // remove o item e atualiza a lista de favoritos
+        localStorage.setItem('comicsFavoritos', JSON.stringify(this.favoritos))
+        return false
+      }
+      // add o item e atualiza a lista de favoritos
+      const { id, title, thumbnail } = item
+      const newItem = { id, title, thumbnail }
+      this.favoritos.push(newItem)
+      localStorage.setItem('comicsFavoritos', JSON.stringify(this.favoritos))
+      return true
     },
     getData () {
       const itemsDivisionPerPages = Math.ceil(this.nextCall / this.totalPages)
@@ -160,7 +187,6 @@ export default {
     async getComics () {
       const url = `https://gateway.marvel.com:443/v1/public/comics?limit=${this.items}&offset=${this.offset}&ts=1&apikey=ccb91ea93ed84198d84ff123b905b3e0&hash=abfb123ade3b1b0ad442eaee7820a4d6`
       const { data } = await this.$axios.get(url)
-      console.log(data.data.results)
       this.data.push(...data.data.results)
       this.total = data.data.total
       this.load = false

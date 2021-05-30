@@ -69,6 +69,17 @@ export default {
       email: '',
       password: ''
     }
+  },
+  mounted () {
+    this.isLoged()
+  },
+  methods: {
+    isLoged () {
+      const loggedIn = localStorage.getItem('user')
+      if (loggedIn) {
+        this.$router.push('/')
+      }
+    }
   }
 }
 </script>
