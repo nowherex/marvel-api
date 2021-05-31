@@ -1,45 +1,16 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+require('dotenv').config({path: __dirname + '/.env'})
 
-const customerRoute = require('./src/routes/CustomerRoute')
-const rentRoute = require('./src/routes/RentRoute')
-const carRoutes = require('./src/routes/CarRoute')
-
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUI = require('swagger-ui-express');
+const userRoute = require('./src/routes/userRoute')
 
 app.use(morgan('tiny'))
 
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
-const swaggerOptions = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            description: `Api simples para locação de veículos.`,
-            version: "1.0.0",
-            title: "Crud API - RentCar",
-            contact: {
-                email: "leoguedes.14@hotmail.com",
-            },
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-            },
-        ],
-    },
-    apis: ["./src/routes/*.js"],
-}
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-
-app.use('/customers', customerRoute)
-app.use('/customers', rentRoute)
-app.use('/cars', carRoutes)
+app.use('/users', userRoute)
 
 
 
