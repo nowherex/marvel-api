@@ -1,9 +1,18 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
 require('dotenv').config({path: __dirname + '/.env'})
 
 const userRoute = require('./src/routes/userRoute')
+
+var corsOptions = {
+    origin: 'http://localhost:8080',
+    optionsSuccessStatus: 200 // For legacy browser support
+}
+
+app.use(cors(corsOptions));
+
 
 app.use(morgan('tiny'))
 
@@ -14,19 +23,6 @@ app.use('/users', userRoute)
 
 
 
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*')
-    res.header(
-        'Access-Control-Allow-Header',
-        'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-    );
-
-    if (req.method === 'OPTIONS') {
-        res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
-        return res.status(200).send({})
-    }
-    next()
-});
 
 
 app.use((req, res, next) => {

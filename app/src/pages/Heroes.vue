@@ -10,29 +10,6 @@
     <div class="text-h6 q-ma-md">
       Herois
     </div>
-    <q-card class="no-border no-shadow bg-transparent">
-      <q-card-section class="q-pa-sm">
-        <q-input
-          v-model="search"
-          rounded
-          outlined
-          placeholder="Procurar Heroi"
-        >
-          <template #append>
-            <q-icon
-              v-if="search === ''"
-              name="search"
-            />
-            <q-icon
-              v-else
-              name="clear"
-              class="cursor-pointer"
-              @click="search = ''"
-            />
-          </template>
-        </q-input>
-      </q-card-section>
-    </q-card>
     <q-separator />
     <div />
     <div
@@ -85,15 +62,11 @@
       </div>
       <q-pagination
         v-model="page"
+        color="primary"
         :min="current"
         :max="Math.ceil(total/Number(totalPages))"
-        direction-links
-        boundary-links
         :max-pages="6"
-        icon-first="skip_previous"
-        icon-last="skip_next"
-        icon-prev="fast_rewind"
-        icon-next="fast_forward"
+        :boundary-numbers="false"
       />
     </div>
   </q-page>
@@ -108,7 +81,9 @@ export default {
   },
   data () {
     return {
+      logged: false,
       load: true,
+      user: null,
       isLiked: false,
       search: '',
       id: 0,
@@ -141,35 +116,113 @@ export default {
       ]
     }
   },
-  mounted () {
-    this.getHeroes()
-    if (JSON.parse(localStorage.getItem('heroisFavoritos'))) {
-      this.favoritos = JSON.parse(localStorage.getItem('heroisFavoritos'))
+  computed: {
+    api_url () {
+      return process.env.API_URL
+    },
+    api_marvel_url_comic () {
+      return process.env.API_MARVEL_URL_COMIC
+    },
+    api_marvel_url_hero () {
+      return process.env.API_MARVEL_URL_HERO
+    },
+    api_marvel_key () {
+      return process.env.API_MARVEL_KEY
     }
   },
+  mounted () {
+    this.isLoged()
+    if (JSON.parse(localStorage.getItem('user'))) {
+      this.user = JSON.parse(localStorage.getItem('user'))
+    }
+    this.getFavoritosHerois()
+    this.getHeroes()
+  },
   methods: {
+    isLoged () {
+      const loggedIn = JSON.parse(localStorage.getItem('user'))
+      if (loggedIn) {
+        this.logged = true
+        return true
+      }
+      return false
+    },
+    async getFavoritosHerois () {
+      if (this.logged) {
+        const urlFavoritos = `${this.api_url}/${this.user?.user_id}/heroes`
+        const token = this.user?.token
+        const { data } = await this.$axios.get(urlFavoritos, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+        // eslint-disable-next-line camelcase
+        data.forEach(({ hero_id, name, extension, path }) => this.favoritos.push({ id: Number(hero_id), name, thumbnail: { extension, path } }))
+        localStorage.setItem('heroisFavoritos', JSON.stringify(this.favoritos))
+      }
+    },
+    async setFavoritosHerois (item) {
+      if (this.logged) {
+        const urlFavoritos = `${this.api_url}/${this.user?.user_id}/heroes`
+        const token = this.user.token
+        const { id, name, thumbnail } = item
+        const newItem = {
+          hero_id: id,
+          name,
+          path: thumbnail.path,
+          extension: thumbnail.extension
+        }
+        await this.$axios({
+          method: 'post', // you can set what request you want to be
+          url: urlFavoritos,
+          data: newItem,
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+        this.favoritos.push(item)
+      }
+    },
+    async removeFavoritosHerois (item) {
+      if (this.logged) {
+        const urlFavoritos = `${this.api_url}/${this.user?.user_id}/heroes/${item.id}`
+        const token = this.user.token
+        await this.$axios({
+          method: 'delete', // you can set what request you want to be
+          url: urlFavoritos,
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+      }
+    },
     getItem (item) {
-      const localStorageFavorites = JSON.parse(localStorage.getItem('heroisFavoritos'))
-      this.favorites = localStorage
-        .getItem('heroisFavoritos') !== null
-        ? localStorageFavorites
-        : []
       if (this.favoritos.some(heroi => heroi.id === item.id)) {
         return true
       }
       return false
     },
     likeItem (item) {
+      if (!this.logged) {
+        this.$q.notify({
+          type: 'negative',
+          message: 'User disconnected, going to login'
+        })
+        this.timer = setTimeout(() => {
+          this.$router.push('/login')
+          this.timer = 0
+        }, 1000)
+      }
       if (this.favoritos.some(heroi => heroi.id === item.id)) {
         this.favoritos.splice(this.favoritos.findIndex(x => x.id === item.id), 1)
-        // remove o item e atualiza a lista de favoritos
+        this.removeFavoritosHerois(item)
         localStorage.setItem('heroisFavoritos', JSON.stringify(this.favoritos))
+        // remove o item e atualiza a lista de favoritos
         return false
       }
       // add o item e atualiza a lista de favoritos
-      const { id, name, thumbnail } = item
-      const newItem = { id, name, thumbnail }
-      this.favoritos.push(newItem)
+      this.favoritos.push(item)
+      this.setFavoritosHerois(item)
       localStorage.setItem('heroisFavoritos', JSON.stringify(this.favoritos))
       return true
     },
@@ -185,7 +238,7 @@ export default {
       return this.data.slice((this.page - 1) * this.totalPages, (this.page - 1) * this.totalPages + this.totalPages)
     },
     async getHeroes () {
-      const url = `https://gateway.marvel.com:443/v1/public/characters?limit=${this.items}&offset=${this.offset}&ts=1&apikey=ccb91ea93ed84198d84ff123b905b3e0&hash=abfb123ade3b1b0ad442eaee7820a4d6`
+      const url = `${this.api_marvel_url_hero}${this.items}&offset=${this.offset}&${this.api_marvel_key}`
       const { data } = await this.$axios.get(url)
       this.data.push(...data.data.results)
       this.total = data.data.total

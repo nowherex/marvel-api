@@ -21,6 +21,14 @@
                 style="max-width: 150px"
               /> API
             </router-link>
+            <p class="text-white q-mb-xs">
+              <a
+                href="https://github.com/nowherex"
+                target="_blank"
+                class="text-white q-mb-xs"
+                style="text-decoration: none;"
+              > By Leonardo Guedes </a>
+            </p>
           </q-toolbar-title>
 
           <q-btn
@@ -36,18 +44,19 @@
                     to="/Favoritos"
                     flat
                     color="secondary"
-                    label="Meus Favorites"
+                    label="Meus Favoritos"
                   />
                   <div class="text-grey text-bold q-mt-md q-mb-xs">
-                    John Doe
+                    {{ name }}
                   </div>
 
                   <q-btn
                     v-close-popup
                     color="primary"
-                    label="Logout"
+                    :label="logged ? 'LOGOUT' : 'Login'"
                     push
                     size="sm"
+                    @click="loginOrLogout"
                   />
                 </div>
               </div>
@@ -69,7 +78,29 @@ export default {
   name: 'MainLayout',
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      logged: false,
+      name: ''
+    }
+  },
+  mounted () {
+    this.isLoged()
+  },
+  methods: {
+    loginOrLogout () {
+      if (this.logged) {
+        localStorage.removeItem('user')
+        this.$router.go(this.$router.currentRoute)
+        return ''
+      }
+      this.$router.push('/login')
+    },
+    isLoged () {
+      const loggedIn = JSON.parse(localStorage.getItem('user'))
+      if (loggedIn) {
+        this.name = loggedIn.user
+        this.logged = true
+      }
     }
   }
 }

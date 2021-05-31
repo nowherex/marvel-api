@@ -114,8 +114,8 @@ module.exports = function (/* ctx */) {
       workboxPluginMode: 'GenerateSW', // 'GenerateSW' or 'InjectManifest'
       workboxOptions: {}, // only for GenerateSW
       manifest: {
-        name: 'marvel-api',
-        short_name: 'marvel-api',
+        name: 'Api - Marvel',
+        short_name: 'Api - Marvel',
         description: 'app para consumir api da Marvel',
         display: 'standalone',
         orientation: 'portrait',

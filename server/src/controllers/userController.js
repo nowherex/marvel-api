@@ -58,10 +58,9 @@ class UserController {
             expiresIn: "1h"
           });
         return res.status(200).send({
-          message: 'Successfully authenticated',
           user: userExist.name,
           user_id: userExist.id,
-          token: token
+          token: token,
         })
       }
       return res.status(401).send({ message: 'Authentication failed' })
@@ -77,7 +76,7 @@ class UserController {
         where: { email: req.body.email }
       })
       if (userExist) {
-        console.log(userExist)
+
         return res.status(409).send({ erro: "User already registered" })
       }
 

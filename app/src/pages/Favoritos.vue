@@ -97,7 +97,8 @@ export default {
   },
   data () {
     return {
-      search: '',
+      logged: false,
+      user: null,
       options: [
         {
           label: '20 items',
@@ -126,7 +127,9 @@ export default {
         totalPages: 20,
         page: 1,
         nextCall: 100,
-        total: 0
+        total: 0,
+        url: 'heroes',
+        localStorage: 'heroisFavoritos'
       },
       opComics: {
         load: true,
@@ -138,38 +141,62 @@ export default {
         totalPages: 20,
         page: 1,
         nextCall: 100,
-        total: 0
+        total: 0,
+        url: 'comics',
+        localStorage: 'comicsFavoritos'
       }
 
     }
   },
+  computed: {
+    api_url () {
+      return process.env.API_URL
+    },
+    api_marvel_url_comic () {
+      return process.env.API_MARVEL_URL_COMIC
+    },
+    api_marvel_url_hero () {
+      return process.env.API_MARVEL_URL_HERO
+    },
+    api_marvel_key () {
+      return process.env.API_MARVEL_KEY
+    }
+  },
   mounted () {
-    if (JSON.parse(localStorage.getItem('heroisFavoritos'))) {
-      this.opHerois.favoritos = JSON.parse(localStorage.getItem('heroisFavoritos'))
-    }
-    if (JSON.parse(localStorage.getItem('comicsFavoritos'))) {
-      this.opComics.favoritos = JSON.parse(localStorage.getItem('comicsFavoritos'))
-    }
+    this.isLoged()
     this.getHerois()
     this.getComics()
+    this.getFavoritos(this.opComics)
+    this.getFavoritos(this.opHerois)
   },
   methods: {
-    getTypeNameItem (item) {
-      return item.name ? this.opHerois : this.opComics
+    remoUserLogin () {
+      localStorage.removeItem('user')
+      this.$router.go(this.$router.currentRoute)
+    },
+    isLoged () {
+      const loggedIn = JSON.parse(localStorage.getItem('user'))
+      if (loggedIn) {
+        this.logged = true
+        this.user = loggedIn
+        return true
+      }
+      return false
     },
     getItemLocal (item) {
-      if (this.getTypeNameItem(item).favoritos.some(localItem => localItem.id === item.id)) {
+      const nameOfObject = item.name ? this.opHerois : this.opComics
+      if (nameOfObject.favoritos.some(localItem => localItem.id === item.id)) {
         return true
       }
       return false
     },
     likeItem (item) {
-      if (this.getTypeNameItem(item).favoritos.some(localItem => localItem.id === item.id)) {
-        this.getTypeNameItem(item).favoritos.splice(this.getTypeNameItem(item).favoritos.findIndex(x => x.id === item.id), 1)
+      const nameOfObject = item.name ? this.opHerois : this.opComics
+      if (nameOfObject.favoritos.some(localItem => localItem.id === item.id)) {
+        nameOfObject.favoritos.splice(nameOfObject.favoritos.findIndex(x => x.id === item.id), 1)
         // remove o item e atualiza a lista de favoritos
-        const nameLocalStorage = item.name ? 'heroisFavoritos' : 'comicsFavoritos'
-        localStorage.setItem(nameLocalStorage, JSON.stringify(this.getTypeNameItem(item).favoritos))
-        nameLocalStorage === 'heroisFavoritos' ? this.getHerois() : this.getComics()
+        this.removeFavoritos(nameOfObject, item)
+        localStorage.setItem(nameOfObject.localStorage, JSON.stringify(nameOfObject.favoritos))
         // (this.page - 1) * this.totalPages - 1, (this.page - 1) * this.totalPages + this.totalPages
         return false
       }
@@ -184,15 +211,47 @@ export default {
       return this.opComics.data
         .slice((this.opComics.page - 1) * this.opComics.totalPages, (this.opComics.page - 1) * this.opComics.totalPages + this.opComics.totalPages)
     },
+    async getFavoritos (objeto) {
+      if (this.isLoged) {
+        const urlFavoritos = `${this.api_url}/${this.user?.user_id}/${objeto.url}`
+        const token = this.user?.token
+        const { data } = await this.$axios.get(urlFavoritos, {
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+        // eslint-disable-next-line camelcase
+        // debugger
+        const nameOrTitle = objeto.url === 'comics' ? 'title' : 'name'
+        // data.forEach(a => objeto.favoritos.push({ id: Number(id), nameOrTitle, thumbnail: { path, ext } }))
+        data.forEach(item => objeto.favoritos.push({
+          id: Number(item.comic_id || item.hero_id),
+          [nameOrTitle]: item.name || item.title,
+          thumbnail: { path: item.path, extension: item.extension }
+        }))
+        localStorage.setItem(objeto.localStorage, JSON.stringify(objeto.favoritos))
+      }
+    },
+    async removeFavoritos (objeto, item) {
+      if (this.logged) {
+        const urlFavoritos = `${this.api_url}/${this.user?.user_id}/${objeto.url}/${item.id}`
+        const token = this.user.token
+        await this.$axios({
+          method: 'delete', // you can set what request you want to be
+          url: urlFavoritos,
+          headers: {
+            Authorization: 'Bearer ' + token
+          }
+        })
+      }
+    },
     async getHerois () {
       this.opHerois.data = this.opHerois.favoritos
-      console.log('data', this.opHerois.data)
       this.opHerois.total = this.opHerois.favoritos.length
       this.opHerois.load = false
     },
     async getComics () {
       this.opComics.data = this.opComics.favoritos
-      console.log('data', this.opComics.data)
       this.opComics.total = this.opComics.favoritos.length
       this.opComics.load = false
     }

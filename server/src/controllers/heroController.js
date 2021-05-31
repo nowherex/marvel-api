@@ -20,8 +20,6 @@ class HeroController {
                 return res.status(404).send({ erro: "user not found" })
             }
 
-
-
             return res.send(user.heroes)
         } catch (err) {
             return res.status(400).send({ error: err.message })
@@ -49,10 +47,12 @@ class HeroController {
                 where: { hero_id },
                 defaults: {...req.body}
             })
+            console.log(req.body)
             await user.addHero(hero)
            
             return res.status(201).send({ hero })
         } catch (err) {
+            console.log(req.body, err)
             return res.status(400).send({ error: err.message })
         }
     }
