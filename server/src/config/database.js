@@ -1,9 +1,9 @@
 module.exports = {
-    dialect: process.env.DIALECT,
-    host: process.env.MYSQL_HOST,
-    username: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
+    dialect: 'mysql',
+    host: '127.0.0.1',
+    username: 'root',
+    password: 'Gba540',
+    database: 'marvel_api',
     define: {
       timestamps: true,
       underscored: true,
