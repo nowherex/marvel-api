@@ -72,6 +72,7 @@ npm run dev
 ```bash
 quasar dev
 ```
+<p>Obs: a Pasta app/ contem dois arquivos de variaveis de ambientes, ambos ja preenchidos com minha key e url da api em produção para facilitar os testes. Irei deletar a key posteriomente.</p>
 <p><b>7) Faça os testes</b></p>
 Link para a collections de teste no postman:
 https://www.getpostman.com/collections/2a460fc49e280ed17b0f
