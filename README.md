@@ -2,7 +2,7 @@
 
 ### Descrição
 
-Simples aplicação para consumo da API - Marvel, implementado também back-end próprio para persistência de dados (herois e comiscs favoritas, usuários),para acompanhar o desenvolvimento veja o branch: Develop.
+Simples aplicação para consumo da API - Marvel, implementado também back-end próprio para persistência de dados (herois e comiscs favoritas, usuários).
 
 
 <h2> Detalhes do projeto</h2>
@@ -44,7 +44,7 @@ O melhor suporte para navegadores de desktop e móveis (incluindo iOS Safari!) P
 <hr>
 <h2>Teste em Desenvolvimento</h2>
 <p>Ordem de execução para teste:</p>
-<p><b>1) Clone o repositório (develop)</b></p>
+<p><b>1) Clone o repositório</b></p>
 <p><b>2) Instale as dependencias:</b></p>
 <p>npm ou yarn install nas pastas: server e app</p>
 ```
