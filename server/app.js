@@ -6,40 +6,7 @@ require('dotenv').config({path: __dirname + '/.env'})
 
 const userRoute = require('./src/routes/userRoute')
 
-const swaggerJsDoc = require('swagger-jsdoc');
-const swaggerUI = require('swagger-ui-express');
-
-var corsOptions = {
-    origin: 'http://localhost:8080',
-    optionsSuccessStatus: 200 // For legacy browser support
-}
-
-app.use(cors(corsOptions));
-
-
-const swaggerOptions = {
-    definition: {
-        openapi: "3.0.0",
-        info: {
-            description: `Api simples para locação de veículos.`,
-            version: "1.0.0",
-            title: "Crud API - RentCar",
-            contact: {
-                email: "leoguedes.14@hotmail.com",
-            },
-        },
-        servers: [
-            {
-                url: "http://localhost:3000",
-            },
-        ],
-    },
-    apis: ["./src/routes/*.js"],
-}
-
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
-
+app.use(cors());
 
 
 app.use(morgan('tiny'))

@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const userController = require('../controllers/UserController')
+const userController = require('../controllers/userController')
 const HeroController = require('../controllers/heroController')
 const ComicController = require('../controllers/comicController')
 const UserLogin = require('../middleware/login')
