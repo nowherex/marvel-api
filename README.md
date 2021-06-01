@@ -36,7 +36,7 @@ O melhor suporte para navegadores de desktop e móveis (incluindo iOS Safari!) P
 
 <h4>Deploy - em produção</h4>
 <ul>
-  <li><b>Heroku</li>
+<li><b>Heroku</b></li>
   <p>
   link: https://marvel-api-web.herokuapp.com/
   </p>
