@@ -6,7 +6,7 @@
   >
     <div
       class="flex flex-center"
-      @click="$emit('click-on-card')"
+      @click="clickcard"
     >
       <q-img
         :src="data.thumbnail.path+'.'+data.thumbnail.extension"
@@ -43,6 +43,9 @@ export default {
   methods: {
     togglefav: function () {
       this.$emit('togglefav', !this.isLiked)
+    },
+    clickcard: function () {
+      this.$emit('clickcard')
     }
   }
 }

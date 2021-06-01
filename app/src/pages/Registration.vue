@@ -57,6 +57,15 @@
                 />
               </div>
             </q-form>
+            <q-card-section class="text-center q-pa-sm float-right">
+              <router-link
+                to="/Login"
+                class="text-grey-6 "
+                style="text-decoration: none;"
+              >
+                Login
+              </router-link>
+            </q-card-section>
           </q-card-section>
         </q-card>
       </q-page>

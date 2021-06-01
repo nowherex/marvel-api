@@ -42,6 +42,7 @@
         <card
           :data="item"
           :is-liked="getItem(item)"
+          @clickcard="getMoreInfo(item)"
           @togglefav="likeItem(item)"
         />
       </div>
@@ -69,6 +70,42 @@
         :boundary-numbers="false"
       />
     </div>
+    <q-dialog v-model="modal">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">
+            {{ moreinfo.name }}
+          </div>
+          <q-space />
+          <q-btn
+            v-close-popup
+            icon="close"
+            flat
+            round
+            dense
+          />
+        </q-card-section>
+
+        <img :src="moreinfo.src">
+
+        <q-card-section />
+
+        <q-card-section class="q-pt-none">
+          {{ moreinfo.descri }}
+        </q-card-section>
+        <q-card-actions>
+          <a
+            :href="moreinfo.link"
+            target="_blank"
+            class="text-grey q-mb-xs"
+            style="text-decoration: none;"
+          >
+            <q-btn flat>
+              Marvel Detail
+            </q-btn></a>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -81,12 +118,18 @@ export default {
   },
   data () {
     return {
+      moreinfo: {
+        name: '',
+        src: '',
+        link: '',
+        descri: ''
+      },
+      modal: false,
       logged: false,
       load: true,
       user: null,
       isLiked: false,
       search: '',
-      id: 0,
       favoritos: [],
       data: [],
       current: 1,
@@ -139,6 +182,19 @@ export default {
     this.getHeroes()
   },
   methods: {
+    async getMoreInfo (item) {
+      const url = `${this.api_marvel_url_hero}/${item.id}?${this.api_marvel_key}`
+      const { data } = await this.$axios.get(url)
+      const { description, urls } = data.data.results[0]
+      this.moreinfo = {
+        name: item.name,
+        src: `${item.thumbnail.path}.${item.thumbnail.extension}`,
+        link: urls[0]?.url,
+        descri: description,
+        id: item.id
+      }
+      this.modal = true
+    },
     isLoged () {
       const loggedIn = JSON.parse(localStorage.getItem('user'))
       if (loggedIn) {
@@ -238,7 +294,7 @@ export default {
       return this.data.slice((this.page - 1) * this.totalPages, (this.page - 1) * this.totalPages + this.totalPages)
     },
     async getHeroes () {
-      const url = `${this.api_marvel_url_hero}${this.items}&offset=${this.offset}&${this.api_marvel_key}`
+      const url = `${this.api_marvel_url_hero}?limit=${this.items}&offset=${this.offset}&${this.api_marvel_key}`
       const { data } = await this.$axios.get(url)
       this.data.push(...data.data.results)
       this.total = data.data.total

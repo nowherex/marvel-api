@@ -5,6 +5,7 @@ const HeroController = require('../controllers/heroController')
 const ComicController = require('../controllers/comicController')
 const UserLogin = require('../middleware/login')
 
+
 router.post('/login', userController.login)
 router.get('/', UserLogin.required, userController.index)
 

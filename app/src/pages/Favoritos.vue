@@ -30,6 +30,7 @@
         <card
           :data="item"
           :is-liked="getItemLocal(item)"
+          @clickcard="getMoreInfo(item)"
           @togglefav="likeItem(item)"
         />
       </div>
@@ -67,6 +68,7 @@
         <card
           :data="item"
           :is-liked="getItemLocal(item)"
+          @clickcard="getMoreInfo(item)"
           @togglefav="likeItem(item)"
         />
       </div>
@@ -84,7 +86,42 @@
         icon-prev="fast_rewind"
         icon-next="fast_forward"
       />
-    </div>
+    </div><q-dialog v-model="modal">
+      <q-card>
+        <q-card-section class="row items-center q-pb-none">
+          <div class="text-h6">
+            {{ moreinfo.name || moreinfo.title }}
+          </div>
+          <q-space />
+          <q-btn
+            v-close-popup
+            icon="close"
+            flat
+            round
+            dense
+          />
+        </q-card-section>
+
+        <img :src="moreinfo.src">
+
+        <q-card-section />
+
+        <q-card-section class="q-pt-none">
+          {{ moreinfo.descri }}
+        </q-card-section>
+        <q-card-actions>
+          <a
+            :href="moreinfo.link"
+            target="_blank"
+            class="text-grey q-mb-xs"
+            style="text-decoration: none;"
+          >
+            <q-btn flat>
+              Marvel Detail
+            </q-btn></a>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -97,6 +134,14 @@ export default {
   },
   data () {
     return {
+      moreinfo: {
+        title: '',
+        src: '',
+        link: '',
+        descri: '',
+        id: ''
+      },
+      modal: false,
       logged: false,
       user: null,
       options: [
@@ -170,6 +215,20 @@ export default {
     this.getFavoritos(this.opHerois)
   },
   methods: {
+    async getMoreInfo (item) {
+      const urlComicOrHero = item.name ? this.api_marvel_url_hero : this.api_marvel_url_comic
+      const url = `${urlComicOrHero}/${item.id}?${this.api_marvel_key}`
+      const { data } = await this.$axios.get(url)
+      const { description, urls } = data.data.results[0]
+      this.moreinfo = {
+        name: item.name || item.title,
+        src: `${item.thumbnail.path}.${item.thumbnail.extension}`,
+        link: urls[0]?.url,
+        descri: description,
+        id: item.id
+      }
+      this.modal = true
+    },
     remoUserLogin () {
       localStorage.removeItem('user')
       this.$router.go(this.$router.currentRoute)
