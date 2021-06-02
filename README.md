@@ -1,3 +1,4 @@
+
 # Marvel Web - API
 
 ### Descrição
@@ -47,6 +48,7 @@ O melhor suporte para navegadores de desktop e móveis (incluindo iOS Safari!) P
 <p><b>1) Clone o repositório</b></p>
 <p><b>2) Instale as dependencias:</b></p>
 <p>npm ou yarn install nas pastas: server e app</p>
+
 ```
 server/ e app/
 
@@ -59,16 +61,20 @@ yarn install
 <p>na pasta server/, consta o arquivo .env_example, troque para as credenciais para a do seu banco de dados. (remova o _example do nome)</p>
 <p><b>4) Rode as migrations</b></p>
 <p>Com o sequelize-cli instalado, dentro da pasta server, execute o comando:</p>
+
 ```bash
 server/
 
 npx sequelize db:migrate
 ```
+
 <p><b>5) Execute o servidor (pasta server)</b></p>
+
 ```bash
 npm run dev
 ```
 <p><b>6) Execute o front-end (pasta app)</b></p>
+
 ```bash
 quasar dev
 ```
@@ -79,7 +85,7 @@ https://www.getpostman.com/collections/2a460fc49e280ed17b0f
 
 <hr>
 
-#####Algumas imagens:
+##### Algumas imagens:
 Home 01
 ![Home 01](https://uploaddeimagens.com.br/images/003/268/477/full/01.JPG?1622520939 "Home 01")
 
